@@ -8,12 +8,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.commonmark.node.*;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+
 //issues to fix:
 //ensure that link is of proper format (no spaces in link itself)
 //fix case where link can span multiple lines
 
 public class MarkdownParse {
     public static ArrayList<String> getLinks(String markdown) {
+
+        Parser parser = Parser.builder().build();
+        Node node = parser.parse(markdown);
+        Visitor linkVisitor = new Visitor();
+        node.accept(linkVisitor);
+        return linkVisitor.links;
+        /*
         ArrayList<String> toReturn = new ArrayList<>();
 
         //Split the contents of the markdown file into each individual line
@@ -47,8 +58,20 @@ public class MarkdownParse {
         }
         //*/
         //System.out.println(toReturn.size());
-        return toReturn;
+        //return toReturn;
     }
+
+    public static class Visitor extends AbstractVisitor{
+        int linkCount = 0;
+        ArrayList<String> links = new ArrayList<>();
+
+        @Override
+        public void visit(Link link){
+            linkCount++;
+            links.add(link.getDestination());
+        }
+    }
+
     public static boolean isOfLinkForm(String s){
         int firstBracket = s.indexOf("[");
         int pivotalSeq = s.indexOf("](");
@@ -99,15 +122,17 @@ public class MarkdownParse {
         }
     }
     public static void main(String[] args) throws IOException {
-		/*
+        /*
         Path fileName = Path.of(args[0]);
         String contents = Files.readString(fileName);
         ArrayList<String> links = getLinks(contents);
         System.out.println(links);
         //*/
+
         File fileName = new File(args[0]);
         Map<String, List<String>> links = getLinks(fileName);
         for(String s: links.keySet())
             System.out.println(links.get(s));
+        //*/
     }
 }

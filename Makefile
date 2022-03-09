@@ -1,7 +1,7 @@
 CLASSPATH = lib/*:.
 
 MarkdownParse.class: MarkdownParse.java
-	javac MarkdownParse.java
+	javac -cp $(CLASSPATH) MarkdownParse.java
 
 MarkdownParseTest.class: MarkdownParseTest.java
 	javac -cp $(CLASSPATH) MarkdownParseTest.java MarkdownParse.java
